@@ -2,24 +2,38 @@
 
 # TODO: Add feature to sync existing files with google drive and other cloud services
 
+counter=1
+
 while true; do
+    case $counter in
+        1)
+            prompt='What do you want to do?'
+            ;;
+        2)
+            prompt='What do you want to do now?'
+            ;;
+        3)
+            prompt='Anything else?'
+            ;;
+        *)
+            prompt='What next?'
+            ;;
+    esac
     gum style \
         --foreground 255 --border-foreground 255 --border double \
         --align center --width 40 --margin "1" --padding "2" \
         'Hello and welcome to Arcra!'
 
-    gum style 'What do you want to do? This program will loop until you choose to exit'
+    gum style "$prompt"
 
     choice=$(gum choose "create project" "delete existing project" "launch writing program" "create plaintext file" "read existing plaintext file" "exit")
 
     case "$choice" in
         "delete existing project")
             clear
-            location=$(gum input --cursor.foreground "#FF0" --prompt.foreground "#FF0" \
-                --prompt "Please enter the directory containing your existing project: " --placeholder "I'll wait")
+            location=$(gum input --prompt "Please enter the directory containing your project, e.g Downloads: " --placeholder "Documents, perhaps?")
                 
-            directory=$(gum input --cursor.foreground "#FF0" --prompt.foreground "#FF0" \
-                --prompt "Now enter the name of your project folder: " --placeholder "I'll wait")
+            directory=$(gum input --prompt "Now enter the name of your project folder: " --placeholder "take your time")
             clear
             cd || exit
             cd "$location" || exit
@@ -30,8 +44,11 @@ while true; do
         "create project")
             clear
             # Prompt the user for a name for their story
-            story_name=$(gum input --cursor.foreground "#FF0" --prompt.foreground "#FF0" \
-                --prompt "Please enter a name for your new story project: " --placeholder "Any name works")
+            story_name=$(gum input --prompt "What do you want to call your story project? " --placeholder "Any name works")
+                
+            location=$(gum input --prompt "And where do you want to create it - Documents, perhaps? " --placeholder "choose wisely")
+            cd || exit
+            cd "$location" || exit
             
             # Create a directory with the entered name
 	    mkdir "$story_name"
@@ -60,7 +77,7 @@ while true; do
 
         "create plaintext file")
             clear
-            file=$(gum input --prompt "What do you want to name your file? Include the file extension, e.g .txt " --placeholder "any name works")
+            file=$(gum input --prompt "What do you want to name your file? Include the file extension. " --placeholder "any name works")
             
             location=$(gum input --prompt "And where do you want to create it? " --placeholder "choose wisely")
             cd || exit
@@ -78,9 +95,14 @@ while true; do
             file=$(gum input --prompt "And what is it called? Include the file extension please " --placeholder "is it a nice name?")
             gum pager < "$file"
             ;;
+   esac
 
-        "exit")
-            clear && echo 'Alright, bye!' && sleep 3 && clear && exit
-            ;;
-    esac
+    if [ "$choice" == "exit" ]; then
+        clear && echo 'Alright, bye!' && sleep 3 && clear && exit
+    fi
+
+    ((counter++))
+    if [ $counter -gt 3 ]; then
+        counter=1
+    fi
 done
