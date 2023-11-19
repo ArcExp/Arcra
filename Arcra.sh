@@ -69,10 +69,10 @@ while true; do
         "launch writing program")
             clear
             # Prompt the user for the app name
-            chosen_editor=$(gum input --prompt "Enter your editor of choice: " --placeholder "eww, libreoffice") 
+            chosen_editor=$(gum input --prompt "Enter your editor of choice: " --placeholder "eww, libreoffice")
 
-            # Launch the chosen app and close Arcra
-            gum spin -s line --title 'Launching your chosen editor for you in a few seconds...' sleep 2 && clear && "$chosen_editor"
+            # Launch the chosen editor
+            gum spin -s line --title 'Launching your chosen editor for you in a few seconds...' sleep 2 && clear && "$chosen_editor" >/dev/null 2>&1
             ;;
 
         "create plaintext file")
